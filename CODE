@@ -1,0 +1,58 @@
+!pip install nltk
+import nltk
+nltk.download('punkt')
+from nltk.tokenize import sent_tokenize
+text="""Hello Ms. Priya, how are you doing today? Did you have breakfast? The weather is great today. You shouldn't eat more carbs"""
+tokenized_text=sent_tokenize(text)
+print(tokenized_text)
+from nltk.tokenize import word_tokenize
+tokenized_word=word_tokenize(text)
+print(tokenized_word)
+from nltk.probability import FreqDist
+fdist = FreqDist(tokenized_word)
+print(fdist)
+fdist.most_common(2)
+import matplotlib.pyplot as plt
+fdist.plot(30,cumulative=False)
+plt.show()
+from nltk.corpus import stopwords
+nltk.download('stopwords')
+stop_words=set(stopwords.words("english"))
+print(stop_words)
+#Lexicon Normalization
+#performing stemming and Lemmatization
+
+from nltk.stem.wordnet import WordNetLemmatizer
+lem = WordNetLemmatizer()
+
+from nltk.stem.porter import PorterStemmer
+nltk.download('wordnet')
+stem = PorterStemmer()
+
+word = "flying"
+print("Lemmatized Word:",lem.lemmatize(word,"v"))
+print("Stemmed Word:",stem.stem(word))
+sent = "Albert Einstein was born in Ulm, Germany in 1879."
+tokens=nltk.word_tokenize(sent)
+print(tokens)
+
+nltk.download('averaged_perceptron_tagger')
+nltk.pos_tag(tokens)# Import pandas
+import pandas as pd
+data=pd.read_csv('./train.tsv', sep='\t')
+data.Sentiment.value_counts()
+Sentiment_count=data.groupby('Sentiment').count()
+plt.bar(Sentiment_count.index.values, Sentiment_count['Phrase'])
+plt.xlabel('Review Sentiments')
+plt.ylabel('Number of Review')
+plt.show()
+from sklearn.feature_extraction.text import CountVectorizer
+from nltk.tokenize import RegexpTokenizer
+#tokenizer to remove unwanted elements from out data like symbols and numbers
+token = RegexpTokenizer(r'[a-zA-Z0-9]+')
+cv = CountVectorizer(lowercase=True,stop_words='english',ngram_range = (1,1),tokenizer = token.tokenize)
+text_counts= cv.fit_transform(data['Phrase'])
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    text_counts, data['Sentiment'], test_size=0.3, random_state=1)
+    
